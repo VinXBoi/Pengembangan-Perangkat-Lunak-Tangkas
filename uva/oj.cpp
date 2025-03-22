@@ -28,7 +28,6 @@ int checkCard(char a) {
 }
 
 void solve() {
-    
     int turn = 0;
     for(int i = 1; i < (int) len(s); i += 3) {
         if(turn % 2 == 0) player.push_back(s[i]);
@@ -48,19 +47,25 @@ void solve() {
 
     while(len(player) > 0 && len(dealer) > 0) {
         char a;
+        bool found = false;
         if(turn % 2 == 0) a = *(player.end() - 1), player.pop_back();
         else a = *(dealer.end() - 1), dealer.pop_back();
         
         int take = checkCard(a);
-        (take ? turn++ : 0);
-
+        (take ? found = true : 0);
+        turn++;
+        
         for(int i = 0; i < take; i++) {
-          if(turn % 2 == 0) a = *(player.end() - 1), player.pop_back();
-          else a = *(dealer.end() - 1), dealer.pop_back();
-
-          if(checkCard(a)) i = 0, take = checkCard(a), idx++;
-
+            if(turn % 2 == 0) a = *(player.end() - 1), player.pop_back();
+            else a = *(dealer.end() - 1), dealer.pop_back();
+            if(checkCard(a)) i = 0, take = checkCard(a), turn++;
         }
+        if(found) {
+            if(turn % 2 == 0) player.insert(player.begin(), temp.begin(), temp.end());
+            else dealer.insert(dealer.begin(), temp.begin(), temp.end());
+            temp.clear()
+        }
+        temp.push_back(a);
     }
     if(len(player)) cout << 2 << ' ' << len(player) << endl;
     else cout << 1 << ' ' << len(dealer) << endl;

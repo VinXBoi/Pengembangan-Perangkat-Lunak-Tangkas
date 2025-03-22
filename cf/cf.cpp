@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #define INF 1000000000
 #define blank ' '
+#define len(x) x.size()
 using namespace std;
 typedef long long ll;
 typedef pair<int, int> pii;
@@ -26,29 +27,20 @@ void no() {
 }
 
 void solve() {
-    int n, m; cin >> n >> m;
-    vi black(n); vi white(m);
+    int n; cin >> n;
+    vector<int> p, m, pe;
 
-    for(auto &num : black) cin >> num;
-    for(auto &num : white) cin >> num;
-    
-    sort(black.rbegin(), black.rend());
-    sort(white.rbegin(), white.rend());
-
-    ll ans = 0;
-    vi maxBlack(n + 1, 0);
-    vi maxWhite(m + 1, 0);
     for(int i = 0; i < n; i++) {
-        maxBlack[i + 1] = black[i] + maxBlack[i];
-        cout << "Black : " << maxBlack[i + 1] << endl;
+        int num; cin >> num;
+        if(num == 1) p.push_back(i + 1);
+        if(num == 2) m.push_back(i + 1);
+        if(num == 3) pe.push_back(i + 1);
     }
-
-    for(int i = 0; i < m; i++) {
-        maxWhite[i + 1] = white[i] + maxWhite[i];
-        cout << "White : " << maxWhite[i + 1] << endl;
+    n = min({len(p), len(m), len(pe)});
+    cout << n << endl;
+    for(int i = 0; i < n; i++) {
+        cout << p[i] << ' ' << m[i] << ' ' << pe[i] << '\n';
     }
-    cout << maxBlack[n + 1] + maxWhite[m + 1] << endl;
-    cout << ans << endl;
 }
 
 int main() {    
@@ -58,16 +50,9 @@ int main() {
 }
 
 /*
-7 = 111
-4 = 100
-b = 011 = 3
+7
+1 3 1 3 2 1 2
 
-3 = 011
-5 = 101
-a = 110 = 6
-
-1 = 001
-2 = 010
-4 = 111
-a = 111 = 7
+4
+2 1 1 2
 */
