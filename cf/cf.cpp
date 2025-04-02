@@ -18,41 +18,23 @@ typedef vector<pifl> vif;
 typedef vector<pff> vff;
 typedef vector<pid> vid;
 
-void yes() {
-    cout << "Yes" << endl;
-}
-
-void no() {
-    cout << "No" << endl;
-}
-
 void solve() {
     int n; cin >> n;
-    vector<int> p, m, pe;
-
+    map<int,int> mp;
     for(int i = 0; i < n; i++) {
         int num; cin >> num;
-        if(num == 1) p.push_back(i + 1);
-        if(num == 2) m.push_back(i + 1);
-        if(num == 3) pe.push_back(i + 1);
+        mp[num] = i;
     }
-    n = min({len(p), len(m), len(pe)});
-    cout << n << endl;
-    for(int i = 0; i < n; i++) {
-        cout << p[i] << ' ' << m[i] << ' ' << pe[i] << '\n';
-    }
+    for()
 }
 
 int main() {    
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int testCase = 1;
+    int testCase = 1; cin >> testCase;
     while(testCase--) solve();
 }
 
 /*
-7
-1 3 1 3 2 1 2
-
-4
-2 1 1 2
+1 2 3 4 5 6
+1 3 5 2 4 6
 */

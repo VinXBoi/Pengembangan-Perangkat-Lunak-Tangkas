@@ -17,7 +17,6 @@ typedef vector<ff> vff;
 typedef vector<id> vid;
 
 string s;
-vector<char> player, dealer, temp;
 
 int checkCard(char a) {
     if(a == 'A') return 4;
@@ -28,12 +27,13 @@ int checkCard(char a) {
 }
 
 void solve() {
+    deque<char> player, dealer, temp;
     int turn = 0;
     for(int i = 1; i < len(s); i += 3) {
         if(turn % 2 == 0) player.push_back(s[i]);
         else dealer.push_back(s[i]);
         turn++;
-    }
+    };
     for(int i = 0; i < 3; i++) {
         getline(cin, s);
         for(int j = 1; j < len(s); j += 3) {
@@ -44,60 +44,83 @@ void solve() {
     }
 
     turn = 0;
-    cout << "START\n";
-    while(true) {
-        if(turn % 2 == 0 && player.empty()) break;
-        if(turn & 1 == 0 && dealer.empty()) break;
+    bool gameWon = false;
+    while(!gameWon) {
         char a;
         bool found = false;
-        cout << "Turn : " << (turn % 2 == 0 ? "Player " : "Dealer ");
-        if(turn % 2 == 0) a = *(player.end() - 1), player.pop_back();
-        else a = *(dealer.end() - 1), dealer.pop_back();
-        cout << a << endl;
+
+        if(turn % 2 == 0) {
+            if(!player.empty()) {
+                a = player.back();
+                player.pop_back();
+            } else {    
+                gameWon = true;
+                break;
+            }
+        }
+        else if(turn % 2 == 1) {
+            if(!dealer.empty()) {
+                a = dealer.back();
+                dealer.pop_back();
+            } else {
+                gameWon = true;
+                break;
+            }
+        }
+        
         int take = checkCard(a);
-        temp.push_back(a);
-
         (take ? found = true : 0);
+        temp.push_back(a);
+        
         turn++;
-
         for(int i = 0; i < take; i++) {
-            if(player.empty() || dealer.empty()) break;
-            if(turn % 2 == 0) a = *(player.end() - 1), player.pop_back();
-            else a = *(dealer.end() - 1), dealer.pop_back();
+            if(turn % 2 == 0 && player.empty()) {
+                gameWon = true;
+                break;
+            }
+            if(turn % 2 == 1 && dealer.empty()) {
+                gameWon = true;
+                break;
+            }
+            
+            if(turn % 2 == 0) a = player.back(), player.pop_back();
+            else a = dealer.back(), dealer.pop_back();
             if(checkCard(a)) i = -1, take = checkCard(a), turn++;
             temp.push_back(a);
+
         }
-        if(found) {
+        if(found && !gameWon) {
             turn++;
-            reverse(temp.begin(), temp.end());
-            if(turn % 2 == 0) player.insert(player.begin(), temp.begin(), temp.end());
-            else dealer.insert(dealer.begin(), temp.begin(), temp.end());
-            temp.clear();
+            while(!temp.empty()) {
+                if(turn % 2 == 0) player.emplace_front(temp.front());
+                else dealer.emplace_front(temp.front());
+                temp.pop_front();
+            }
         }
     }
-    if(len(player)) cout << 2 << ' ' << len(player) << endl;
-    else cout << 1 << ' ' << len(dealer) << endl;
+    if(len(player)) cout << 2 << ' ' << len(player);
+    else cout << 1 << ' ' << len(dealer);
 }
 
 int main() {    
     ios_base::sync_with_stdio(0); cin.tie(0);
+    int testCase = 1;
     while(getline(cin, s)) {
         if(s == "#") break;
+        if(testCase >= 2) cout << endl;
+        testCase++;
         solve();
     }
 }
 
 /*
-H1 H1 
-H1 H1
-H1 H1
-H1 HJ
-
-p = 4; d = 4;
-p = 3; d = 3;
-p = 2; d = 6;
-d = 5; p = 1;
-d = 4; p = 0;
-d = 3; p = lose;
-
+HA H3 H4 CA SK S5 C5 S6 C4 D5 H7 HJ HQ
+D4 D7 SJ DT H6 S9 CT HK C8 C9 D6 CJ C6
+S8 D8 C2 S2 S3 C7 H5 DJ S4 DQ DK D9 D3
+H9 DA SA CK CQ C3 HT SQ H8 S7 ST H2 D2
+HA H3 H4 CA SK S5 C5 S6 C4 D5 H7 HJ HQ
+D4 D7 SJ DT H6 S9 CT HK C8 C9 D6 CJ C6
+S8 D8 C2 S2 S3 C7 H5 DJ S4 DQ DK D9 D3
+H9 DA SA CK CQ C3 HT SQ H8 S7 ST H2 D2
+#
 */
