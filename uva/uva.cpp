@@ -27,7 +27,7 @@ int checkCard(char a) {
 }
 
 void solve() {
-    deque<char> player, dealer, temp;
+    deque<char> player, dealer, heap;
     int turn = 0;
     for(int i = 1; i < len(s); i += 3) {
         if(turn % 2 == 0) player.push_back(s[i]);
@@ -46,57 +46,61 @@ void solve() {
     turn = 0;
     bool gameWon = false;
     while(!gameWon) {
+        int winner;
         char a;
-        bool found = false;
-
-        if(turn % 2 == 0) {
-            if(!player.empty()) {
-                a = player.back();
-                player.pop_back();
-            } else {    
-                gameWon = true;
-                break;
-            }
-        }
-        else if(turn % 2 == 1) {
-            if(!dealer.empty()) {
-                a = dealer.back();
-                dealer.pop_back();
+        if(heap.empty() || heap.back() == 0) {
+            if(turn % 2 == 0) {
+                if(player.empty()) {
+                    gameWon = true;
+                    break;
+                }
+                a = player.back(); player.pop_back();
             } else {
-                gameWon = true;
-                break;
+                if(dealer.empty()) {
+                    gameWon = true;
+                    break;
+                }
+                a = dealer.back(); dealer.pop_back();
             }
-        }
-        
-        int take = checkCard(a);
-        (take ? found = true : 0);
-        temp.push_back(a);
-        
-        turn++;
-        for(int i = 0; i < take; i++) {
-            if(turn % 2 == 0 && player.empty()) {
-                gameWon = true;
-                break;
+            if(checkCard(a)) winner = turn % 2;
+            heap.push_back(a);
+        } else {
+            if(turn % 2 == 0) {
+                int penalty = checkCard(heap.back());
+                for(int i = 0; i < penalty; i++) {
+                    if(player.empty()) {
+                        gameWon = true;
+                        break;
+                    }
+                    a = player.back(); player.pop_back();
+                    heap.push_back(a);
+                    if(checkCard(a)) {winner = turn % 2; break;}
+                }
+                if(!gameWon && turn != winner) {
+                    while(!heap.empty()) {
+                        player.push_front(heap.front());
+                        heap.pop_front();
+                    }
+                }
+            } else {
+                int penalty = checkCard(heap.back());
+                for(int i = 0; i < penalty; i++) {
+                    if(dealer.empty()) {
+                        gameWon = true;
+                        break;
+                    }
+                    a = dealer.back(); dealer.pop_back();
+                    heap.push_back(a);
+                    if(checkCard(a)) {winner = turn % 2; break;}
+                }   
+                if(!gameWon && turn != winner) {
+                    while(!heap.empty()) {
+                        dealer.push_front(heap.front());
+                        heap.pop_front();
+                    }
+                }             
             }
-            if(turn % 2 == 1 && dealer.empty()) {
-                gameWon = true;
-                break;
-            }
-            
-            if(turn % 2 == 0) a = player.back(), player.pop_back();
-            else a = dealer.back(), dealer.pop_back();
-            if(checkCard(a)) i = -1, take = checkCard(a), turn++;
-            temp.push_back(a);
-
-        }
-        if(found && !gameWon) {
-            turn++;
-            while(!temp.empty()) {
-                if(turn % 2 == 0) player.emplace_front(temp.front());
-                else dealer.emplace_front(temp.front());
-                temp.pop_front();
-            }
-        }
+        } turn++;
     }
     if(len(player)) cout << 2 << ' ' << len(player);
     else cout << 1 << ' ' << len(dealer);
@@ -124,3 +128,4 @@ S8 D8 C2 S2 S3 C7 H5 DJ S4 DQ DK D9 D3
 H9 DA SA CK CQ C3 HT SQ H8 S7 ST H2 D2
 #
 */
+

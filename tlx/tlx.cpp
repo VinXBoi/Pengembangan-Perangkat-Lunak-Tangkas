@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#define INF 1000000000
 #define blank ' '
 #define len(x) x.size()
 using namespace std;
@@ -15,50 +14,77 @@ typedef vector<ii> vii;
 typedef vector<ifl> vif;
 typedef vector<ff> vff;
 typedef vector<id> vid;
-
-string s;
-stack<char> player;
-stack<char> dealer;
-stack<char> temp;
+typedef vector<vi> vvi;
 
 void solve() {
-    int n, m; cin >> n >> m;
-    int cnt = 0;
-    vector<vector<int>> graph(n + 1);
-    vector<bool> visited(n + 1, false);
-
-    for(int i = 0; i < m; i++) {
-        int x, y; cin >> x >> y;
-        graph[x].push_back(y);
-        graph[y].push_back(x);
-    }
+    int n, m, x; cin >> n >> m >> x;
+    int size = max(n, m);
+    vector<vector<int>> arr(size, vector<int> (size, 0));
 
     for(int i = 0; i < n; i++) {
-        if(!visited[i + 1]) {
-            queue<int> q;
-            q.push(i + 1);
-            visited[i + 1] = true;
-            cnt++;
-            while(len(q)) {
-                int temp = q.front(); q.pop();
-                for(int j = 0; j < len(graph[temp]); j++) {
-                    if(!visited[graph[temp][j]]) {
-                        visited[graph[temp][j]] = true;
-                        q.push(graph[temp][j]);
-                    }
-                }
-            }
+        for(int j = 0; j < m; j++) {
+            cin >> arr[i][j];
         }
     }
-    cout << m - (n - cnt) << endl;
+
+    for(int i = 0; i < x; i++) {
+        vvi temp(size, vi(size, 0));
+        string s; cin >> s;
+        if(s == "90" || s == "270") swap(n, m);
+        for(int row = 0; row < n; row++) {
+            for(int col = 0; col < m; col++) {
+                if(s == "|") temp[row][col] = arr[row][m - col - 1];
+                else if(s == "_") temp[row][col] = arr[n - row - 1][col];
+                else if(s == "90") temp[row][col] = arr[m - col - 1][row];
+                else if(s == "180") temp[row][col] = arr[n - row - 1][m - col - 1];
+                else if(s == "270") temp[row][col] = arr[col][n - row - 1];
+            }
+        }
+
+        arr = temp;
+    }
+    
+    for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size; j++) {
+            if(arr[i][j] == 0) continue;
+            cout << arr[i][j] << ' ';
+        } cout << '\n';
+    }
 }
 
 int main() {    
     ios_base::sync_with_stdio(0); cin.tie(0);
     int testCase = 1;
+    // cin >> testCase;
     while(testCase--) solve();
 }
 
 /*
+3 2
+1 2
+3 4
+5 6
 
+_
+5 6 
+3 4
+1 2
+
+|
+2 1
+4 3
+6 5
+
+90
+5 3 1
+2 4 6
+
+180
+6 5
+4 3
+2 1
+
+270
+2 4 6
+1 3 5
 */
