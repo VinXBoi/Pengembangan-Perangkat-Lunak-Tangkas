@@ -17,42 +17,47 @@ typedef vector<id> vid;
 typedef vector<vector<int>> vvi;
 
 void solve() {
-    int n, m, x; cin >> n >> m >> x;
-    int size = max(n, m);
-    vvi arr(size, vi (size, 0));
+    int n, m; cin >> n >> m;
+    vi cnt(n + 1, 0);
+    vvi graph(n + 1);
 
-    for(int i = 0; i < n; i++) {
-        for(int j = 0; j < m; j++) {
-            cin >> arr[i][j];
-        }
+    for(int x, y; m--; ){
+        cin >> x >> y;
+        cnt[x]++;
+        cnt[y]++;
+        graph[x].emplace_back(y);
+        graph[y].emplace_back(x);
     }
-    n--; m--;
-    for(int i = 0; i < x; i++) {
-        vii temp(size, vi(size, 0));
-        string s; cin >> s;
-        if(s == "90" || s == "270") swap(n, m);
-        for(int row = 0; row < size; row++) {
-            for(int col = col; col < size; col++) {
-                if(s == "|") temp[row][col] = arr[row][m - col];
-                else if(s == "_") temp[row][col] = arr[n - row][col];
-                else if(s == "90") temp[row][col] = arr
+
+    bool found = true;
+    int ans = 0;
+    while(found) {
+        found = false;
+        for(int i = 1; i <= n; i++) {
+            if(cnt[i] == 1) {
+                found = true;
+                queue<int> q;
+                q.push(i);
+                while(!q.empty()) {
+                    int temp = q.front(); q.pop();
+                    cnt[temp]--;
+                    for(auto neighbour : graph[temp]) {
+                        cnt[neighbour]--;
+                        q.push(neighbour);
+                    }
+                }
             }
         }
+        if(found) ans++;
     }
-
-
-    for(int i = 0; i < max(n, m); i++) {
-        for(int j = 0; j < max(n, m); j++) {
-            if(arr[i][j] == 0) continue;
-            cout << arr[i][j] << ' ';
-        } cout << '\n';
-    }
-}
+    
+    cout << ans << endl;
+}   
 
 int main() {    
     ios_base::sync_with_stdio(0); cin.tie(0);
     int testCase = 1;
-    cin >> testCase;
+    // cin >> testCase;
     while(testCase--) solve();
 }
 

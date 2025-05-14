@@ -18,15 +18,12 @@ typedef vector<id> vid;
 typedef vector<vi> vvi;
 typedef vector<vc> vvc;
 vvi arr(30, vi(30, -1));
-vvi arrB(30, vi(30, -1));
-
+vector<vector<bool>> visited(30, vector<bool> (30, false));
 int m, n;
-
 int turn(int x, int y, int temp) {
-    if(x < 1 || x > m || y < 1 || y > n || arr[x][y] == 0 || arr[x][y] != temp) return 0;
-
+    if(x < 1 || x > m || y < 1 || y > n || visited[x][y] || arr[x][y] != temp) return 0;
+    visited[x][y] = true;
     int cnt = 1;
-    arr[x][y] = 0;
     cnt += turn(x + 1, y, temp);
     cnt += turn(x - 1, y, temp);    
     cnt += turn(x, y + 1, temp);
@@ -51,6 +48,7 @@ void fall() {
     }
 }
 
+
 void turnZero(int x, int y, int temp) {
     if(x < 1 || x > m || y < 1 || y > n) return;
     arr[x][y] = 0;
@@ -69,16 +67,27 @@ void solve() {
     }
     int ans = -1;
     int x, y, temp;
-    for(int turn = 0; turn < 2; turn++) {
-        ans = -1;
-        for(int i = 1; i <= m; i++) {
-            for(int j = 1; j <= n; j++) {
-                if(arr[x][y] == 0) continue;
-                temp = turn(i, j, arr[i][j]);
-                ans = max(ans, temp);
+    for(int i = 1; i <= m; i++) {
+        for(int j = 1; j <= n; j++) {
+            if(visited[i][j]) continue;
+            temp = turn(i, j, arr[i][j]);
+            if(ans < temp) {
+                ans = temp;
+                x = i; y = j;
             }
         }
     }
+    turnZero(x, y, arr[x][y]); 
+    fall();
+    for(int i = 1; i <= m; i++) {
+        for(int j = 1; j <= n; j++) {
+            if(arr[i][j] == -1) cout << '.';
+            else cout << arr[i][j];
+            cout << ' ';
+        } cout << '\n';
+    }
+
+    
 }
 
 int main() {    
